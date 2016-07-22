@@ -13,26 +13,26 @@ module dff #(parameter WIDTH = 32) (
 
 endmodule // dff
 
-
-module dff_tb ();
-
-    reg clk, reset, en;
-    reg [31  : 0] d;
-    wire [31 : 0] q;
-
-    dff DFF(clk, reset, en, d, q);
-
-    initial begin
-        $monitor("time: %d q: %h", $time, q);
-        clk   = 0;
-        en    = 1;
-        reset = 1;
-        d     = 32'hdeadbeef;
-        # 50 reset = 0;
-        # 100 $finish;
-    end
-
-    always #5
-        clk = ~clk;
-
-endmodule // dff_tb
+//
+// module dff_tb ();
+//
+//     reg clk, reset, en;
+//     reg [31  : 0] d;
+//     wire [31 : 0] q;
+//
+//     dff DFF(clk, reset, en, d, q);
+//
+//     initial begin
+//         $monitor("time: %d q: %h", $time, q);
+//         clk   = 0;
+//         en    = 1;
+//         reset = 1;
+//         d     = 32'hdeadbeef;
+//         # 50 reset = 0;
+//         # 100 $finish;
+//     end
+//
+//     always #5
+//         clk = ~clk;
+//
+// endmodule // dff_tb
