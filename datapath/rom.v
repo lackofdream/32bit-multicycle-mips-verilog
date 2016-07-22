@@ -1,6 +1,6 @@
 module rom #(parameter WIDTH = 32, ADDR_WIDTH = 10) (
     input [ADDR_WIDTH-1 : 0] addr,
-    output [WIDTH-1 : 0] data
+    output [WIDTH-1     : 0] data
     );
 
     reg [WIDTH-1 : 0] ROM[0:(1<<ADDR_WIDTH)-1];

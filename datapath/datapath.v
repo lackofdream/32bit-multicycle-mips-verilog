@@ -3,13 +3,13 @@ module datapath (
     // ========= Signal from Controller =========
     // All Signal Varibles are capitalized
     input PCWriteCond, PCWrite,
-    input [1:0] PCSource,
+    input [1   : 0] PCSource,
     input IorD,
     input MemToReg,
     input IRWrite,
     input RegWrite, RegDst,
     input ALUSrcA,
-    input [1:0] ALUSrcB,
+    input [1   : 0] ALUSrcB,
     // ========= Data from ALUController =========
     input zero,
     input [31  : 0] aluResult,
@@ -42,35 +42,35 @@ module datapath (
     // ==================
 
     // ========= Instruction fetched from Memory stored in instr_reg =========
-    wire [31:0] instruction;
+    wire [31 : 0] instruction;
     // ==================
 
     // ========= Data fetched from Memory stored in mem_reg =========
-    wire [31:0] memDataInReg;
+    wire [31 : 0] memDataInReg;
     // ==================
 
     // ========= Registry Write Address =========
-    wire [4:0] writeRegAddr;
+    wire [4  : 0] writeRegAddr;
     // ==================
 
     // ========= Registry Write Data =========
-    wire [31:0] writeRegData;
+    wire [31 : 0] writeRegData;
     // ==================
 
     // ========= Data directly from Registry =========
-    wire [31:0] dataFromReg1, dataFromReg2;
+    wire [31 : 0] dataFromReg1, dataFromReg2;
     // ==================
 
     // ========= Data directly from Registry stored in DFF =========
-    wire [31:0] regData1, regData2;
+    wire [31 : 0] regData1, regData2;
     // ==================
 
     // ========= Instruction slices for output =========
+    wire [4  : 0] regAddr1FromInstr, regAddr2FromInstr, regAddr3FromInstr; // regAddr3FromInstr is for R-type Instruction
+    wire [15 : 0] immFromInstr;
+    wire [25 : 0] jumpAddrFromInstr;
     assign op                = instruction[31:26];
     assign funct             = instruction[5:0];
-    wire [4:0] regAddr1FromInstr, regAddr2FromInstr, regAddr3FromInstr; // regAddr3FromInstr is for R-type Instruction
-    wire [15:0] immFromInstr;
-    wire [25:0] jumpAddrFromInstr;
     assign regAddr1FromInstr = instruction[25:21];
     assign regAddr2FromInstr = instruction[20:16];
     assign regAddr3FromInstr = instruction[15:11];
@@ -79,12 +79,12 @@ module datapath (
     // ==================
 
     // ========= Sign-Extended Imm=========
-    wire [31:0] extendedImm;
+    wire [31 : 0] extendedImm;
     // ==================
 
     // ========= Left 2-bit shifted Values=========
-    wire [31:0] extendedImmx4;
-    wire [27:0] jumpAddrFromInstrx4;
+    wire [31 : 0] extendedImmx4;
+    wire [27 : 0] jumpAddrFromInstrx4;
     // ==================
 
     PC mips_pc(clk, reset, nextIns, PCWrite, currentIns);
@@ -102,6 +102,6 @@ module datapath (
     leftshift2 extended_imm_left_shift2(extendedImm, extendedImmx4);
     mux4 mips_alu_src2(regData2, 32'h4, extendedImm, extendedImmx4, ALUSrcB, aluParamData2);
     leftshift2 #(28) jump_addr_left_shift2({2'b0, jumpAddrFromInstr}, jumpAddrFromInstrx4);
-    mux4 next_instr_src(aluResult, aluOut, {instruction[31:28], jumpAddrFromInstrx4}, 32'b0, PCSource, nextIns);
+    mux4 next_instr_src(aluResult, aluOut, {instruction[31 : 28], jumpAddrFromInstrx4}, 32'b0, PCSource, nextIns);
 
 endmodule // datapath

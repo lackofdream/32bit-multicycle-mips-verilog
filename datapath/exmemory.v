@@ -2,12 +2,12 @@ module exmemory #(parameter WIDTH = 32, ADDR_WIDTH = 16) (
     input clk, reset,
     input memWrite,
     input [ADDR_WIDTH-1 : 0] memAddr,
-    input [WIDTH-1 : 0] memWriteData,
+    input [WIDTH-1      : 0] memWriteData,
     output reg [WIDTH-1 : 0] memReadData
     );
 
-    wire [31:0] romData;
-    wire [31:0] ramData;
+    wire [31 : 0] romData;
+    wire [31 : 0] ramData;
     wire ramWrite;
 
     assign ramWrite = ~reset & memWrite & (memAddr[15:12]==4'h1);

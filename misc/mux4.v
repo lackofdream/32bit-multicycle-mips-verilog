@@ -18,7 +18,7 @@ module mux4 #(parameter WIDTH = 32) (
 
 endmodule // mux2
 
-// 
+//
 // module mux4_tb;
 //
 //     reg [31 : 0]  data1  = 32'hdeadbeef;

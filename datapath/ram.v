@@ -2,8 +2,8 @@ module ram #(parameter WIDTH = 32, ADDR_WIDTH = 10) (
     input clk, reset,
     input write,
     input [ADDR_WIDTH-1 : 0] addr,
-    input [WIDTH-1 : 0] inData,
-    output [WIDTH-1 : 0] outData
+    input [WIDTH-1      : 0] inData,
+    output [WIDTH-1     : 0] outData
     );
 
     reg [WIDTH-1 : 0] RAM[0:(1<<ADDR_WIDTH)-1];

@@ -1,5 +1,5 @@
 module leftshift2 #(parameter WIDTH = 32) (
-    input [WIDTH-1 : 0] src,
+    input [WIDTH-1  : 0] src,
     output [WIDTH-1 : 0] out
     );
 
@@ -7,7 +7,7 @@ module leftshift2 #(parameter WIDTH = 32) (
 
 endmodule // leftshift2
 
-// 
+//
 // module leftshift2_tb ();
 //
 //     reg [31:0] src;

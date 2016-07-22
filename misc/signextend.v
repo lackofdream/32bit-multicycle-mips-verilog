@@ -1,6 +1,6 @@
 module signextend (
-    input [15:0] srcImm,
-    output [31:0] res
+    input [15  : 0] srcImm,
+    output [31 : 0] res
     );
 
     assign res = {{16{srcImm[15]}}, srcImm};
