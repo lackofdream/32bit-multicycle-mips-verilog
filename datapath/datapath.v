@@ -27,6 +27,11 @@ module datapath (
 
     assign writeMemData = regData2;
 
+    // ========= processed PC Signal =========
+    wire RealPCWrite;
+    assign RealPCWrite = (PCWriteCond & zero) | PCWrite;
+    // ==================
+
     // ========= Instructions Used by PC =========
     wire [31 : 0] nextIns;
     wire [31 : 0] currentIns;
@@ -87,7 +92,7 @@ module datapath (
     wire [27 : 0] jumpAddrFromInstrx4;
     // ==================
 
-    PC mips_pc(clk, reset, nextIns, PCWrite, currentIns);
+    PC mips_pc(clk, reset, nextIns, RealPCWrite, currentIns);
     mux2 mips_instr_addr_src(currentIns, aluOut, IorD, insAddr);
     mux2 #(5) mips_reg_write_addr_src(regAddr2FromInstr, regAddr3FromInstr, RegDst, writeRegAddr);
     regfile mips_reg(clk, reset, RegWrite, regAddr1FromInstr, regAddr2FromInstr, writeRegAddr, writeRegData, dataFromReg1, dataFromReg2);
