@@ -8,13 +8,17 @@ module alu #(parameter WIDTH = 32) (
 
     assign zero = (aluResult == 32'b0) ? 1'b1 : 1'b0;
 
-    always @ (posedge clk) begin
+    always @ ( * ) begin
         if (reset) aluResult <= 32'b0;
         else begin
             case (ALUControl)
                 5'b00010: aluResult <= param1 + param2;
             endcase
         end
+    end
+
+    always @ ( * ) begin
+        $display("[alu] time: %h, src1: %h, src2: %h, alucontrol: %h, aluResult: %h", $time, param1, param2, ALUControl, aluResult);
     end
 
 endmodule // alu

@@ -4,6 +4,7 @@ module controller (
     input [5      : 0] op,
     // ========= Signal to Memory =========
     output reg [0 : 0] MemWrite,
+    output reg [1 : 0] MemMode, // Word or Byte
     // ========= Signal to Datapath =========
     output reg [0 : 0] PCWriteCond, PCWrite,
     output reg [1 : 0] PCSource,
@@ -32,14 +33,16 @@ module controller (
     parameter BRANCH_COMPLETION     = 4'b1000;
     parameter JUMP_COMPLETION       = 4'b1001;
     parameter HALT                  = 4'b1111;
+    parameter RESET                 = 4'b1110;
 
     // OP
-    parameter LB = 6'b100000;
+    parameter LW = 6'b100011;
+    parameter J = 6'b000010;
 
 
     always @ (posedge clk) begin
         $display("[controller] time: %h, state: %b, MemWrite: %b, PCWriteCond: %b, PCWrite: %b, PCSource: %b, IorD: %b, MemToReg: %b, IRWrite: %b, RegWrite: %b, RegDst: %b, ALUSrcA: %b, ALUSrcB: %b, ALUOP: %b", $time, state, MemWrite, PCWriteCond, PCWrite, PCSource, IorD, MemToReg, IRWrite, RegWrite, RegDst, ALUSrcA, ALUSrcB, ALUOP);
-        if (reset) state <= FETCH;
+        if (reset) state <= RESET;
         else state <= nextState;
     end
 
@@ -57,10 +60,50 @@ module controller (
         ALUSrcB     <= 2'b0;
         ALUOP       <= 6'b0;
         case (state)
+            RESET: begin
+                $display("[controller] time: %h, current State: RESET", $time);
+                nextState <= FETCH;
+            end
             FETCH: begin
+                $display("[controller] time: %h, current State: FETCH", $time);
                 IRWrite <= 1;
                 ALUSrcB <= 2'b01;
                 PCWrite <= 1;
+                nextState <= DECODE;
+            end
+            DECODE: begin
+                $display("[controller] time: %h, current State: DECODE", $time);
+                ALUSrcB = 2'b11;
+                case (op)
+                    LW: nextState <= MEM_ADDR_COMPUTE;
+                    J: nextState <= JUMP_COMPLETION;
+                endcase
+            end
+            JUMP_COMPLETION: begin
+                $display("[controller] time: %h, current State: JUMP_COMPLETION", $time);
+                PCWrite <= 1;
+                PCSource <= 2'b10;
+                nextState <= FETCH;
+            end
+            MEM_ADDR_COMPUTE: begin
+                $display("[controller] time: %h, current State: MEM_ADDR_COMPUTE", $time);
+                ALUSrcA <= 1;
+                ALUSrcB <= 2'b10;
+                ALUOP   <= 2'b00;
+                case (op)
+                    LW: nextState <= MEM_READ;
+                endcase
+            end
+            MEM_READ: begin
+                $display("[controller] time: %h, current State: MEM_READ", $time);
+                IorD      <= 1;
+                nextState <= MEM_WRITE_BACK_TO_REG;
+            end
+            MEM_WRITE_BACK_TO_REG: begin
+                $display("[controller] time: %h, current State: MEM_WRITE_BACK_TO_REG", $time);
+                MemToReg <= 1;
+                RegWrite <= 1;
+                RegDst   <= 0;
                 nextState <= FETCH;
             end
             HALT: nextState <= HALT;

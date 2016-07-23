@@ -20,6 +20,10 @@ module regfile #(parameter WIDTH = 32, ADDR_WIDTH = 5) (
             MEM[writeAddr] <= writeData;
     end
 
+    always @ ( MEM[8] ) begin
+        $display("[regfile] time: %h, $t0: %h", $time, MEM[8]);
+    end
+
 
 
 endmodule // regfile

@@ -7,4 +7,8 @@ module PC (
 
     dff #(16) _pc(clk, reset, PCWrite, next_ins, ins);
 
+    always @ ( * ) begin
+        $display("[pc] time: %h, PCWrite: %b, next_ins: %h, ins: %h", $time, PCWrite, next_ins, ins);
+    end
+
 endmodule // PC

@@ -4,6 +4,7 @@ module mips (
     input [31  : 0] memData,
     // ========= Signal to Memory =========
     output MemWrite,
+    output [1  : 0] MemMode,
     // ========= Data to Memory =========
     output [31 : 0] writeMemData,
     output [15 : 0] memAddr
@@ -20,7 +21,7 @@ module mips (
 
     datapath _datapath(clk, reset, PCWriteCond, PCWrite, PCSource, IorD, MemToReg, IRWrite, RegWrite, RegDst, ALUSrcA, ALUSrcB, zero, aluResult, memData, op, funct, aluParamData1, aluParamData2, writeMemData, memAddr);
 
-    controller _controller(clk, reset, op, MemWrite, PCWriteCond, PCWrite, PCSource, IorD, MemToReg, IRWrite, RegWrite, RegDst, ALUSrcA, ALUSrcB, ALUOP);
+    controller _controller(clk, reset, op, MemWrite, MemMode, PCWriteCond, PCWrite, PCSource, IorD, MemToReg, IRWrite, RegWrite, RegDst, ALUSrcA, ALUSrcB, ALUOP);
 
     alucontrol _alucontrol(clk, reset, funct, ALUOP, aluParamData1, aluParamData2, zero, aluResult);
 

@@ -15,6 +15,10 @@ module alucontrol (
         endcase
     end
 
+    always @ ( * ) begin
+        $display("[alucontrol] time: %h, funct: %h, ALUOP: %h, src1: %h, src2: %h, aluResult: %h", $time, funct, ALUOP, aluParamData1, aluParamData2, aluResult);
+    end
+
     alu _alu(clk, reset, aluParamData1, aluParamData2, ALUControl, zero, aluResult);
 
 endmodule // alucontrol

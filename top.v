@@ -4,11 +4,12 @@ module top (
 
     wire [31:0] memData, writeMemData;
     wire MemWrite;
+    wire [1:0] MemMode;
     wire [15:0] memAddr;
 
-    mips _mips(clk, reset, memData, MemWrite, writeMemData, memAddr);
+    mips _mips(clk, reset, memData, MemWrite, MemMode, writeMemData, memAddr);
 
-    exmemory _ex_mem(clk, reset, MemWrite, memAddr, writeMemData, memData);
+    exmemory _ex_mem(clk, reset, MemWrite, MemMode, memAddr, writeMemData, memData);
 
 
 endmodule // top

@@ -2,6 +2,7 @@ module exmemory #(parameter WIDTH = 32, ADDR_WIDTH = 16) (
     input clk, reset,
     // ========= Signal from Controller =========
     input MemWrite,
+    input [1            : 0] MemMode,
     input [ADDR_WIDTH-1 : 0] memAddr,
     input [WIDTH-1      : 0] memWriteData,
     output reg [WIDTH-1 : 0] memReadData
@@ -16,7 +17,7 @@ module exmemory #(parameter WIDTH = 32, ADDR_WIDTH = 16) (
     rom ROM(memAddr[11:2], romData);
     ram RAM(clk, reset, RamWrite, memAddr[11:2], memWriteData, ramData);
 
-    always @ (posedge clk) begin
+    always @ ( * ) begin
         $display("[exmemory] time: %h, read %h", $time, memAddr);
         case (memAddr[15:12])
             4'h0: begin
@@ -33,6 +34,9 @@ module exmemory #(parameter WIDTH = 32, ADDR_WIDTH = 16) (
             $display("[exmemory] write to I/O device");
     end
 
+    always @ ( * ) begin
+        $display("[exmemory] time: %h, romData: %h, ramData: %h", $time, romData, ramData);
+    end
 
 endmodule // exmemory
 

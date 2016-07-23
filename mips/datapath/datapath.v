@@ -105,7 +105,7 @@ module datapath (
     mux4 #(16) next_instr_src(aluResult[15:0], aluOut[15:0], jumpAddrFromInstrx4[15:0], 16'b0, PCSource, nextInsAddr);
 
     always @ ( * ) begin
-        $display("[datapath] time: %h, currentInsAddr: %h,  aluOut: %h, IorD: %b, memAddr: %h", $time, currentInsAddr, aluOut, IorD, memAddr);
+        $display("[datapath] time: %h, currentInsAddr: %h,  aluOut: %h, IorD: %b, memAddr: %h, PCWrite: %b, RealPCWrite: %b", $time, currentInsAddr, aluOut, IorD, memAddr, PCWrite, RealPCWrite);
     end
 
 endmodule // datapath
