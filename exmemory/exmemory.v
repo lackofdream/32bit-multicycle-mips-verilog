@@ -18,25 +18,64 @@ module exmemory #(parameter WIDTH = 32, ADDR_WIDTH = 16) (
     ram RAM(clk, reset, RamWrite, memAddr[11:2], memWriteData, ramData);
 
     always @ ( * ) begin
-        $display("[exmemory] time: %h, read %h", $time, memAddr);
+        // $display("[exmemory] time: %h, mode: %b, read %h", $time, MemMode, memAddr);
         case (memAddr[15:12])
             4'h0: begin
-                memReadData <= romData;
-                $display("[exmemory] read from ROM(%h), got %h", memAddr, memReadData);
+                case (MemMode)
+                    2'b00: memReadData <= romData;
+                    2'b01: begin
+                        case (memAddr[1:0])
+                            2'b00: memReadData <= {{24{romData[7]}}, romData[7:0]};
+                            2'b01: memReadData <= {{24{romData[15]}}, romData[15:8]};
+                            2'b10: memReadData <= {{24{romData[23]}}, romData[23:16]};
+                            2'b11: memReadData <= {{24{romData[31]}}, romData[31:24]};
+                        endcase
+                    end
+                    2'b10: begin
+                        case (memAddr[1:0])
+                            2'b00: memReadData <= {24'b0, romData[7:0]};
+                            2'b01: memReadData <= {24'b0, romData[15:8]};
+                            2'b10: memReadData <= {24'b0, romData[23:16]};
+                            2'b11: memReadData <= {24'b0, romData[31:24]};
+                        endcase
+                    end
+                endcase
+                // $display("[exmemory] read from ROM(%h), got %h", memAddr, memReadData);
             end
             4'h1: begin
-                memReadData <= ramData;
-                $display("[exmemory] read from RAM(%h), got %h", memAddr, memReadData);
+                case (MemMode)
+                    2'b00: memReadData <= ramData;
+                    2'b01: begin
+                        case (memAddr[1:0])
+                            2'b00: memReadData <= {{24{ramData[7]}}, ramData[7:0]};
+                            2'b01: memReadData <= {{24{ramData[15]}}, ramData[15:8]};
+                            2'b10: memReadData <= {{24{ramData[23]}}, ramData[23:16]};
+                            2'b11: memReadData <= {{24{ramData[31]}}, ramData[31:24]};
+                        endcase
+                    end
+                    2'b10: begin
+                        case (memAddr[1:0])
+                            2'b00: memReadData <= {24'b0, ramData[7:0]};
+                            2'b01: memReadData <= {24'b0, ramData[15:8]};
+                            2'b10: memReadData <= {24'b0, ramData[23:16]};
+                            2'b11: memReadData <= {24'b0, ramData[31:24]};
+                        endcase
+                    end
+                endcase
+                // $display("[exmemory] read from RAM(%h), got %h", memAddr, memReadData);
             end
             4'hf: $display("[exmemory] read I/O device");
         endcase
+    end
+
+    always @ (posedge clk) begin
         if (~reset && MemWrite && ~RamWrite)
             $display("[exmemory] write to I/O device");
     end
 
-    always @ ( * ) begin
-        $display("[exmemory] time: %h, romData: %h, ramData: %h", $time, romData, ramData);
-    end
+    // always @ ( * ) begin
+    //     $display("[exmemory] time: %h, romData: %h, ramData: %h", $time, romData, ramData);
+    // end
 
 endmodule // exmemory
 

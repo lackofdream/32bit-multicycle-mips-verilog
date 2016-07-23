@@ -23,6 +23,6 @@ module mips (
 
     controller _controller(clk, reset, op, MemWrite, MemMode, PCWriteCond, PCWrite, PCSource, IorD, MemToReg, IRWrite, RegWrite, RegDst, ALUSrcA, ALUSrcB, ALUOP);
 
-    alucontrol _alucontrol(clk, reset, funct, ALUOP, aluParamData1, aluParamData2, zero, aluResult);
+    alucontrol _alucontrol(funct, ALUOP, aluParamData1, aluParamData2, zero, aluResult);
 
 endmodule // mips
