@@ -1,3 +1,7 @@
+`ifndef _LEFT_SHIFT_2
+`define _LEFT_SHIFT_2
+
+
 module leftshift2 #(parameter WIDTH = 32) (
     input [WIDTH-1  : 0] src,
     output [WIDTH-1 : 0] out
@@ -32,3 +36,5 @@ endmodule // leftshift2
 //     end
 //
 // endmodule // leftshift2_tb
+
+`endif

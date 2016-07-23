@@ -1,3 +1,6 @@
+`ifndef _DFF
+`define _DFF
+
 module dff #(parameter WIDTH = 32) (
     input clk, reset, en,
     input      [WIDTH-1 : 0] d,
@@ -36,3 +39,5 @@ endmodule // dff
 //         clk = ~clk;
 //
 // endmodule // dff_tb
+
+`endif

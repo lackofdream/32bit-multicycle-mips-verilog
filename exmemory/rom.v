@@ -1,3 +1,6 @@
+`ifndef _ROM
+`define _ROM
+
 module rom #(parameter WIDTH = 32, ADDR_WIDTH = 10) (
     input [ADDR_WIDTH-1 : 0] addr,
     output [WIDTH-1     : 0] data
@@ -31,3 +34,5 @@ endmodule // rom
 //
 //
 // endmodule // rom_tb
+
+`endif

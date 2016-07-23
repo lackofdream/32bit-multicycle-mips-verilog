@@ -1,3 +1,6 @@
+`ifndef _MIPS
+`define _MIPS
+
 module mips (
     input clk, reset,
     // ========= Data from Memory =========
@@ -9,6 +12,8 @@ module mips (
     output [15 : 0] memAddr
     );
 
-    
+
 
 endmodule // mips
+
+`endif

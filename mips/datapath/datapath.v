@@ -1,3 +1,16 @@
+`ifdef IVERILOG
+`include "pc.v"
+`include "regfile.v"
+`include "misc/mux2.v"
+`include "misc/dff.v"
+`include "misc/signextend.v"
+`include "misc/leftshift2.v"
+`include "misc/mux4.v"
+`endif
+
+`ifndef _DATAPATH
+`define _DATAPATH
+
 module datapath (
     input clk, reset,
     // ========= Signal from Controller =========
@@ -110,3 +123,5 @@ module datapath (
     mux4 next_instr_src(aluResult, aluOut, {instruction[31 : 28], jumpAddrFromInstrx4}, 32'b0, PCSource, nextIns);
 
 endmodule // datapath
+
+`endif

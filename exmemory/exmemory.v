@@ -1,3 +1,11 @@
+`ifdef IVERILOG
+`include "ram.v"
+`include "rom.v"
+`endif
+
+`ifndef _EX_MEMORY
+`define _EX_MEMORY
+
 module exmemory #(parameter WIDTH = 32, ADDR_WIDTH = 16) (
     input clk, reset,
     input memWrite,
@@ -62,3 +70,5 @@ endmodule // exmemory
 //     end
 //
 // endmodule // exmemory_tb
+
+`endif

@@ -1,3 +1,6 @@
+`ifndef _MUX_2
+`define _MUX_2
+
 module mux2 #(parameter WIDTH = 32) (
     input  [WIDTH-1 : 0] data1,
     input  [WIDTH-1 : 0] data2,
@@ -26,3 +29,5 @@ endmodule // mux2
 //     end
 //
 // endmodule
+
+`endif
