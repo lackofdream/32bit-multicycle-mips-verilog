@@ -1,6 +1,3 @@
-`ifndef _SIGN_EXTEND
-`define _SIGN_EXTEND
-
 module signextend (
     input [15  : 0] srcImm,
     output [31 : 0] res
@@ -24,5 +21,3 @@ endmodule // signextend
 //     end
 //
 // endmodule // signextend_tb
-
-`endif

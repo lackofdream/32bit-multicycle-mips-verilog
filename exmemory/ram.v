@@ -1,6 +1,3 @@
-`ifndef _RAM
-`define _RAM
-
 module ram #(parameter WIDTH = 32, ADDR_WIDTH = 10) (
     input clk, reset,
     input write,
@@ -56,5 +53,3 @@ endmodule // ram
 //     end
 //
 // endmodule // ram_tb
-
-`endif

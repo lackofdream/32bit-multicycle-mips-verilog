@@ -1,6 +1,3 @@
-`ifndef _REGFILE
-`define _REGFILE
-
 module regfile #(parameter WIDTH = 32, ADDR_WIDTH = 5) (
     input clk, reset,
     input regWrite,
@@ -57,5 +54,3 @@ endmodule // regfile
 //     end
 //
 // endmodule // regfile_tb
-
-`endif

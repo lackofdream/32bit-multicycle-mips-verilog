@@ -1,16 +1,3 @@
-`ifdef IVERILOG
-`include "pc.v"
-`include "regfile.v"
-`include "misc/mux2.v"
-`include "misc/dff.v"
-`include "misc/signextend.v"
-`include "misc/leftshift2.v"
-`include "misc/mux4.v"
-`endif
-
-`ifndef _DATAPATH
-`define _DATAPATH
-
 module datapath (
     input clk, reset,
     // ========= Signal from Controller =========
@@ -45,14 +32,9 @@ module datapath (
     assign RealPCWrite = (PCWriteCond & zero) | PCWrite;
     // ==================
 
-    // ========= Instructions Used by PC =========
-    wire [31 : 0] nextIns;
-    wire [31 : 0] currentIns;
-    // ==================
-
-    // ========= Instructions Address used in fetching =========
-    // PC + 4 or Imm
-    wire [31 : 0] insAddr;
+    // ========= Instructions Address Used by PC =========
+    wire [15 : 0] nextInsAddr;
+    wire [15 : 0] currentInsAddr;
     // ==================
 
     // ========= Data produced by alu in dff =========
@@ -105,8 +87,8 @@ module datapath (
     wire [27 : 0] jumpAddrFromInstrx4;
     // ==================
 
-    PC mips_pc(clk, reset, nextIns, RealPCWrite, currentIns);
-    mux2 mips_instr_addr_src(currentIns, aluOut, IorD, insAddr);
+    PC mips_pc(clk, reset, nextInsAddr, RealPCWrite, currentInsAddr);
+    mux2 #(16) mips_instr_addr_src(currentInsAddr, aluOut[15:0], IorD, memAddr);
     mux2 #(5) mips_reg_write_addr_src(regAddr2FromInstr, regAddr3FromInstr, RegDst, writeRegAddr);
     regfile mips_reg(clk, reset, RegWrite, regAddr1FromInstr, regAddr2FromInstr, writeRegAddr, writeRegData, dataFromReg1, dataFromReg2);
     dff mips_instr_reg(clk, reset, IRWrite, memData, instruction);
@@ -115,13 +97,15 @@ module datapath (
     mux2 mips_reg_write_data_src(aluOut, memDataInReg, MemToReg, writeRegData);
     dff mips_dff_a(clk, reset, 1'b1, dataFromReg1, regData1);
     dff mips_dff_b(clk, reset, 1'b1, dataFromReg2, regData2);
-    mux2 mips_alu_src1(currentIns, regData1, ALUSrcA, aluParamData1);
+    mux2 mips_alu_src1({16'b0, currentInsAddr}, regData1, ALUSrcA, aluParamData1);
     signextend imm_extend(immFromInstr, extendedImm);
     leftshift2 extended_imm_left_shift2(extendedImm, extendedImmx4);
     mux4 mips_alu_src2(regData2, 32'h4, extendedImm, extendedImmx4, ALUSrcB, aluParamData2);
     leftshift2 #(28) jump_addr_left_shift2({2'b0, jumpAddrFromInstr}, jumpAddrFromInstrx4);
-    mux4 next_instr_src(aluResult, aluOut, {instruction[31 : 28], jumpAddrFromInstrx4}, 32'b0, PCSource, nextIns);
+    mux4 #(16) next_instr_src(aluResult[15:0], aluOut[15:0], jumpAddrFromInstrx4[15:0], 16'b0, PCSource, nextInsAddr);
+
+    always @ ( * ) begin
+        $display("[datapath] time: %h, currentInsAddr: %h,  aluOut: %h, IorD: %b, memAddr: %h", $time, currentInsAddr, aluOut, IorD, memAddr);
+    end
 
 endmodule // datapath
-
-`endif

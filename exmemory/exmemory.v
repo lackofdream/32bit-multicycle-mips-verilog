@@ -1,14 +1,7 @@
-`ifdef IVERILOG
-`include "ram.v"
-`include "rom.v"
-`endif
-
-`ifndef _EX_MEMORY
-`define _EX_MEMORY
-
 module exmemory #(parameter WIDTH = 32, ADDR_WIDTH = 16) (
     input clk, reset,
-    input memWrite,
+    // ========= Signal from Controller =========
+    input MemWrite,
     input [ADDR_WIDTH-1 : 0] memAddr,
     input [WIDTH-1      : 0] memWriteData,
     output reg [WIDTH-1 : 0] memReadData
@@ -16,21 +9,28 @@ module exmemory #(parameter WIDTH = 32, ADDR_WIDTH = 16) (
 
     wire [31 : 0] romData;
     wire [31 : 0] ramData;
-    wire ramWrite;
+    wire RamWrite;
 
-    assign ramWrite = ~reset & memWrite & (memAddr[15:12]==4'h1);
+    assign RamWrite = ~reset & MemWrite & (memAddr[15:12]==4'h1);
 
     rom ROM(memAddr[11:2], romData);
-    ram RAM(clk, reset, ramWrite, memAddr[11:2], memWriteData, ramData);
+    ram RAM(clk, reset, RamWrite, memAddr[11:2], memWriteData, ramData);
 
     always @ (posedge clk) begin
+        $display("[exmemory] time: %h, read %h", $time, memAddr);
         case (memAddr[15:12])
-            4'h0: memReadData <= romData;
-            4'h1: memReadData <= ramData;
-            4'hf: $display("read I/O device");
+            4'h0: begin
+                memReadData <= romData;
+                $display("[exmemory] read from ROM(%h), got %h", memAddr, memReadData);
+            end
+            4'h1: begin
+                memReadData <= ramData;
+                $display("[exmemory] read from RAM(%h), got %h", memAddr, memReadData);
+            end
+            4'hf: $display("[exmemory] read I/O device");
         endcase
-        if (~reset && memWrite && ~ramWrite)
-            $display("write to I/O device");
+        if (~reset && MemWrite && ~RamWrite)
+            $display("[exmemory] write to I/O device");
     end
 
 
@@ -39,12 +39,12 @@ endmodule // exmemory
 //
 // module exmemory_tb ();
 //
-//     reg clk, reset, memWrite;
+//     reg clk, reset, MemWrite;
 //     reg [15:0] addr;
 //     reg [31:0] inData;
 //     wire [31:0] outData;
 //
-//     exmemory mem(clk, reset, memWrite, addr, inData, outData);
+//     exmemory mem(clk, reset, MemWrite, addr, inData, outData);
 //
 //     always #5
 //         clk = ~clk;
@@ -54,15 +54,15 @@ endmodule // exmemory
 //         $monitor("time: %d, addr: %h, outData: %h", $time, addr, outData);
 //         clk = 0;
 //         reset = 1;
-//         memWrite = 0;
+//         MemWrite = 0;
 //         addr = 16'h1000;
 //         inData = 32'hdeadbeef;
 //         # 10 reset = 0;
-//         # 10 memWrite = 1;
-//         # 10 memWrite = 0;
+//         # 10 MemWrite = 1;
+//         # 10 MemWrite = 0;
 //         # 10 addr = 16'hff00;
-//         # 10 memWrite = 1;
-//         # 10 memWrite = 0;
+//         # 10 MemWrite = 1;
+//         # 10 MemWrite = 0;
 //         # 10 addr = 16'h0001;
 //         # 10 addr = 16'h0002;
 //         # 10 addr = 16'h0004;
@@ -70,5 +70,3 @@ endmodule // exmemory
 //     end
 //
 // endmodule // exmemory_tb
-
-`endif

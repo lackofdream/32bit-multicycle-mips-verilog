@@ -1,6 +1,3 @@
-`ifndef _DFF
-`define _DFF
-
 module dff #(parameter WIDTH = 32) (
     input clk, reset, en,
     input      [WIDTH-1 : 0] d,
@@ -9,7 +6,7 @@ module dff #(parameter WIDTH = 32) (
 
     always @ (posedge clk) begin
         if (reset)
-            q <= 32'b0;
+            q <= {(WIDTH-1) {1'b0}};
         else if (en)
             q <= d;
     end
@@ -39,5 +36,3 @@ endmodule // dff
 //         clk = ~clk;
 //
 // endmodule // dff_tb
-
-`endif
