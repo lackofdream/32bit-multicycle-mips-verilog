@@ -28,7 +28,7 @@ module top_tb ();
         reset = 0;
         # 10 reset = 1;
         # 20 reset = 0;
-        # 200 $finish;
+        # 500 $finish;
     end
 
 

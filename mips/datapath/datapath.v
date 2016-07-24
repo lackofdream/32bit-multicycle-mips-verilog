@@ -8,8 +8,7 @@ module datapath (
     input MemToReg,
     input IRWrite,
     input RegWrite, RegDst,
-    input ALUSrcA,
-    input [1   : 0] ALUSrcB,
+    input [1   : 0] ALUSrcA, ALUSrcB,
     // ========= Data from ALUController =========
     input zero,
     input [31  : 0] aluResult,
@@ -97,15 +96,15 @@ module datapath (
     mux2 mips_reg_write_data_src(aluOut, memDataInReg, MemToReg, writeRegData);
     dff mips_dff_a(clk, reset, 1'b1, dataFromReg1, regData1);
     dff mips_dff_b(clk, reset, 1'b1, dataFromReg2, regData2);
-    mux2 mips_alu_src1({16'b0, currentInsAddr}, regData1, ALUSrcA, aluParamData1);
+    mux4 mips_alu_src1({16'b0, currentInsAddr}, regData1, instruction, 32'b1, ALUSrcA, aluParamData1);
     signextend imm_extend(immFromInstr, extendedImm);
     leftshift2 extended_imm_left_shift2(extendedImm, extendedImmx4);
     mux4 mips_alu_src2(regData2, 32'h4, extendedImm, extendedImmx4, ALUSrcB, aluParamData2);
     leftshift2 #(28) jump_addr_left_shift2({2'b0, jumpAddrFromInstr}, jumpAddrFromInstrx4);
     mux4 #(16) next_instr_src(aluResult[15:0], aluOut[15:0], jumpAddrFromInstrx4[15:0], 16'b0, PCSource, nextInsAddr);
 
-    // always @ ( * ) begin
-        // $display("[datapath] time: %h, RealPCWrite: %b, nextInsAddr: %h, currentInsAddr: %h, aluResult %h, aluOut: %h, instruction: %h, memAddr: %h, memData: %h, memDataInReg: %h, writeRegAddr: %h, writeRegData: %h, dataFromReg1: %h, dataFromReg2: %h, aluParamData1: %h, aluParamData2: %h, ALUSrcA: %b, ALUSrcB: %b", $time, RealPCWrite, nextInsAddr, currentInsAddr, aluResult, aluOut, instruction, memAddr, memData, memDataInReg, writeRegAddr, writeRegData, dataFromReg1, dataFromReg2, aluParamData1, aluParamData2, ALUSrcA, ALUSrcB);
-    // end
+    always @ ( * ) begin
+        $display("[datapath] time: %h, RealPCWrite: %b, nextInsAddr: %h, currentInsAddr: %h, aluResult %h, aluOut: %h, instruction: %h, memAddr: %h, memData: %h, memDataInReg: %h, writeRegAddr: %h, writeRegData: %h, dataFromReg1: %h, dataFromReg2: %h, aluParamData1: %h, aluParamData2: %h, ALUSrcA: %b, ALUSrcB: %b", $time, RealPCWrite, nextInsAddr, currentInsAddr, aluResult, aluOut, instruction, memAddr, memData, memDataInReg, writeRegAddr, writeRegData, dataFromReg1, dataFromReg2, aluParamData1, aluParamData2, ALUSrcA, ALUSrcB);
+    end
 
 endmodule // datapath
