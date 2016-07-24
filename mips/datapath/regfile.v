@@ -12,11 +12,12 @@ module regfile #(parameter WIDTH = 32, ADDR_WIDTH = 5) (
     assign readData1 = MEM[readAddr1];
     assign readData2 = MEM[readAddr2];
 
+    initial begin
+        MEM[0] <= 32'b0;
+    end
+
     always @ (posedge clk) begin
-        if (reset)
-            for (i=0;i<(1<<ADDR_WIDTH);i++)
-                MEM[i] <= 0;
-        else if (regWrite)
+        if (regWrite)
             MEM[writeAddr] <= writeData;
     end
 
