@@ -53,6 +53,7 @@ module controller (
     parameter SB    = 6'b101000;  // test passed?
     parameter ORI   = 6'b001101;  // test passed
     parameter LUI   = 6'b001111;  // test passed
+    parameter BEQ   = 6'b000100;  // test passed
 
     // funct
     parameter SLL   = 6'b000000;  // test passed
@@ -61,6 +62,7 @@ module controller (
     parameter OR    = 6'b100101;  // test passed
     parameter ADDU  = 6'b100001;  // test passed
     parameter ADD   = 6'b100000;  // test passed
+    parameter SUB   = 6'b100010;  // test passed
 
     always @ (posedge clk) begin
         // $display("[controller] time: %h, state: %b, MemWrite: %b, MemMode: %b, PCWriteCond: %b, PCWrite: %b, PCSource: %b, IorD: %b, MemToReg: %b, IRWrite: %b, RegWrite: %b, RegDst: %b, ALUSrcA: %b, ALUSrcB: %b, ALUOP: %b", $time, state, MemWrite, MemMode, PCWriteCond, PCWrite, PCSource, IorD, MemToReg, IRWrite, RegWrite, RegDst, ALUSrcA, ALUSrcB, ALUOP);
@@ -106,8 +108,17 @@ module controller (
                     SB: nextState      <= MEM_ADDR_COMPUTE;
                     ORI: nextState     <= IMM_EXCUTION;
                     LUI: nextState     <= IMM_EXCUTION;
+                    BEQ: nextState     <= BRANCH_COMPLETION;
                     default: nextState <= HALT;
                 endcase
+            end
+            BRANCH_COMPLETION: begin
+                $display("[controller] time: %h, current State: BRANCH_COMPLETION", $time);
+                ALUSrcA     <= 2'b01;
+                ALUOP       <= 5'b01001;
+                PCSource    <= 2'b01;
+                PCWriteCond <= 1;
+                nextState   <= FETCH;
             end
             IMM_EXCUTION: begin
                 $display("[controller] time: %h, current State: IMM_EXCUTION", $time);
@@ -144,6 +155,7 @@ module controller (
                     OR : ALUOP  <= 5'b00001;
                     ADDU: ALUOP <= 5'b00000;
                     ADD: ALUOP  <= 5'b00000;
+                    SUB: ALUOP  <= 5'b01001;
                 endcase
                 nextState <= RTYPE_COMPLETION;
             end
