@@ -66,6 +66,7 @@ module controller (
     parameter ADD   = 6'b100000;  // test passed
     parameter SUB   = 6'b100010;  // test passed
     parameter SUBU  = 6'b100011;  // test passed
+    parameter AND   = 6'b100100;  // test passed
 
     always @ (posedge clk) begin
         // $display("[controller] time: %h, state: %b, MemWrite: %b, MemMode: %b, PCWriteCond: %b, PCWrite: %b, PCSource: %b, IorD: %b, MemToReg: %b, IRWrite: %b, RegWrite: %b, RegDst: %b, ALUSrcA: %b, ALUSrcB: %b, ALUOP: %b", $time, state, MemWrite, MemMode, PCWriteCond, PCWrite, PCSource, IorD, MemToReg, IRWrite, RegWrite, RegDst, ALUSrcA, ALUSrcB, ALUOP);
@@ -114,6 +115,7 @@ module controller (
                     BEQ: nextState     <= BRANCH_COMPLETION;
                     ADDI: nextState    <= IMM_EXCUTION;
                     ADDIU: nextState   <= IMM_EXCUTION;
+                    AND: nextState     <= RTYPE_EXCUTION;
                     default: nextState <= HALT;
                 endcase
             end
@@ -158,6 +160,7 @@ module controller (
                     ADD: ALUOP  <= 5'b00000;
                     SUB: ALUOP  <= 5'b01001;
                     SUBU: ALUOP <= 5'b01001;
+                    AND: ALUOP  <= 5'b00011;
                 endcase
                 nextState <= RTYPE_COMPLETION;
             end
