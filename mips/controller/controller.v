@@ -54,6 +54,8 @@ module controller (
     parameter ORI   = 6'b001101;  // test passed
     parameter LUI   = 6'b001111;  // test passed
     parameter BEQ   = 6'b000100;  // test passed
+    parameter ADDI  = 6'b001000;  // test passed
+    parameter ADDIU = 6'b001001;  // test passed
 
     // funct
     parameter SLL   = 6'b000000;  // test passed
@@ -110,6 +112,8 @@ module controller (
                     ORI: nextState     <= IMM_EXCUTION;
                     LUI: nextState     <= IMM_EXCUTION;
                     BEQ: nextState     <= BRANCH_COMPLETION;
+                    ADDI: nextState    <= IMM_EXCUTION;
+                    ADDIU: nextState   <= IMM_EXCUTION;
                     default: nextState <= HALT;
                 endcase
             end
@@ -124,10 +128,6 @@ module controller (
             IMM_EXCUTION: begin
                 $display("[controller] time: %h, current State: IMM_EXCUTION", $time);
                 ALUSrcA   <= 2'b01;
-                case (op)
-                    ORI: ;
-                    default: ;
-                endcase
                 ALUSrcB   <= 2'b10;
                 case (op)
                     ORI: ALUOP <= 5'b01000;
