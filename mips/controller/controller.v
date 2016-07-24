@@ -50,7 +50,7 @@ module controller (
     parameter LBU   = 6'b100100;  // test passed
     parameter J     = 6'b000010;  // test passed
     parameter RTYPE = 6'b000000;
-    parameter SB    = 6'b101000;
+    parameter SB    = 6'b101000;  // test passed?
     parameter ORI   = 6'b001101;  // test passed
     parameter LUI   = 6'b001111;  // test passed
 

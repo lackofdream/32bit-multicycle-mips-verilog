@@ -5,6 +5,11 @@ module exmemory #(parameter WIDTH = 32, ADDR_WIDTH = 16) (
     input [1            : 0] MemMode,
     input [ADDR_WIDTH-1 : 0] memAddr,
     input [WIDTH-1      : 0] memWriteData,
+    // ========= I/O Devices =========
+    input [15           : 0] switches,
+    output reg [15      : 0] leds,
+
+
     output reg [WIDTH-1 : 0] memReadData
     );
 
@@ -64,13 +69,23 @@ module exmemory #(parameter WIDTH = 32, ADDR_WIDTH = 16) (
                 endcase
                 // $display("[exmemory] read from RAM(%h), got %h", memAddr, memReadData);
             end
-            4'hf: $display("[exmemory] read I/O device");
+            4'hf: begin
+                case (memAddr)
+                    16'hfffe: memReadData <= {24'b0, switches[7:0]};
+                    16'hffff: memReadData <= {24'b0, switches[15:8]};
+                endcase
+            end
         endcase
     end
 
     always @ (posedge clk) begin
-        if (~reset && MemWrite && ~RamWrite)
-            $display("[exmemory] write to I/O device");
+        if (~reset && MemWrite && ~RamWrite) begin
+            $display("[exmemory] time: %h, Write memWriteData: %h to I/O device addr: %h", $time, memWriteData[7:0], memAddr);
+            case (memAddr)
+                16'hfffc: leds <= {8'bz, memWriteData[7:0]};
+                16'hfffd: leds <= {memWriteData[7:0], 8'bz};
+            endcase
+        end
     end
 
     // always @ ( * ) begin
