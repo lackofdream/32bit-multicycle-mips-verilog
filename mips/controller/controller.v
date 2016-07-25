@@ -51,6 +51,7 @@ module controller (
     parameter J     = 6'b000010;  // test passed
     parameter RTYPE = 6'b000000;
     parameter SB    = 6'b101000;  // test passed?
+    parameter SW    = 6'b101011;  // test passed
     parameter ORI   = 6'b001101;  // test passed
     parameter LUI   = 6'b001111;  // test passed
     parameter BEQ   = 6'b000100;  // test passed
@@ -110,6 +111,7 @@ module controller (
                     J: nextState       <= JUMP_COMPLETION;
                     RTYPE: nextState   <= RTYPE_EXCUTION;
                     SB: nextState      <= MEM_ADDR_COMPUTE;
+                    SW: nextState      <= MEM_ADDR_COMPUTE;
                     ORI: nextState     <= IMM_EXCUTION;
                     LUI: nextState     <= IMM_EXCUTION;
                     BEQ: nextState     <= BRANCH_COMPLETION;
@@ -186,6 +188,7 @@ module controller (
                     LB: nextState      <= MEM_READ_SIGNED_BYTE;
                     LBU: nextState     <= MEM_READ_UNSIGNED_BYTE;
                     SB: nextState      <= MEM_WRITE_BYTE;
+                    SW: nextState      <= MEM_WRITE_WORD;
                     default: nextState <= FETCH;
                 endcase
             end
@@ -211,6 +214,13 @@ module controller (
                 MemWrite  <= 1;
                 IorD      <= 1;
                 MemMode   <= 2'b01;
+                nextState <= FETCH;
+            end
+            MEM_WRITE_WORD: begin
+                $display("[controller] time: %h, current State: MEM_WRITE_WORD", $time);
+                MemWrite  <= 1;
+                IorD      <= 1;
+                MemMode   <= 2'b00;
                 nextState <= FETCH;
             end
             MEM_WRITE_BACK_TO_REG: begin
