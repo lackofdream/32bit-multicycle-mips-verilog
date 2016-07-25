@@ -7,6 +7,7 @@ module exmemory #(parameter WIDTH = 32, ADDR_WIDTH = 16) (
     input [WIDTH-1      : 0] memWriteData,
     // ========= I/O Devices =========
     input [15           : 0] switches,
+    input [0            : 0] btn_u, btn_d, btn_l, btn_r,
     output reg [15      : 0] leds,
     output reg [3       : 0] disp_sel,
     output reg [7       : 0] disp_dig,
@@ -17,6 +18,10 @@ module exmemory #(parameter WIDTH = 32, ADDR_WIDTH = 16) (
     wire [31 : 0] romData;
     wire [31 : 0] ramData;
     wire RamWrite;
+
+    wire [1:0] IOState;
+
+    button _btn(clk, reset, btn_u, btn_d, btn_l, btn_r, IOState);
 
     assign RamWrite = ~reset & MemWrite & (memAddr[15:12]==4'h1);
 
@@ -74,6 +79,7 @@ module exmemory #(parameter WIDTH = 32, ADDR_WIDTH = 16) (
                 case (memAddr)
                     16'hfffe: memReadData <= {24'b0, switches[7:0]};
                     16'hffff: memReadData <= {24'b0, switches[15:8]};
+                    16'hfffb: memReadData <= {28'b0, IOState};
                 endcase
             end
         endcase
@@ -82,8 +88,8 @@ module exmemory #(parameter WIDTH = 32, ADDR_WIDTH = 16) (
     always @ (posedge clk) begin
         if (reset) begin
             leds <= 0;
-            disp_sel <= 0;
-            disp_dig <= 0;
+            disp_sel <= 4'b1111;
+            disp_dig <= 8'hff;
         end else if (MemWrite && ~RamWrite) begin
             $display("[exmemory] time: %h, Write memWriteData: %h to I/O device addr: %h", $time, memWriteData[7:0], memAddr);
             case (memAddr)
@@ -95,10 +101,6 @@ module exmemory #(parameter WIDTH = 32, ADDR_WIDTH = 16) (
         end
     end
 
-    // always @ ( * ) begin
-    //     $display("[exmemory] time: %h, romData: %h, ramData: %h", $time, romData, ramData);
-    // end
-
 endmodule // exmemory
 
 //
@@ -108,15 +110,23 @@ endmodule // exmemory
 //     reg [15:0] addr;
 //     reg [31:0] inData;
 //     wire [31:0] outData;
+//     reg btn_u, btn_d, btn_l, btn_r;
+//     reg [15  : 0] switches;
+//     wire [15 : 0] leds;
+//     wire [3  : 0] disp_sel;
+//     wire [7  : 0] disp_dig;
+//     reg [1:0] MemMode;
 //
-//     exmemory mem(clk, reset, MemWrite, addr, inData, outData);
+//     exmemory mem(clk, reset, MemWrite, MemMode, addr, inData, switches, btn_u, btn_d, btn_l, btn_r, leds, disp_sel, disp_dig, outData);
 //
 //     always #5
 //         clk = ~clk;
 //
 //     initial begin
-//         $display("in exmemory_tb");
-//         $monitor("time: %d, addr: %h, outData: %h", $time, addr, outData);
+//         $dumpvars(0, mem);
+//         MemMode = 0;
+//         btn_u = 0;btn_d = 0;btn_l = 0;btn_r = 0;
+//         switches = 0;
 //         clk = 0;
 //         reset = 1;
 //         MemWrite = 0;
@@ -131,7 +141,23 @@ endmodule // exmemory
 //         # 10 addr = 16'h0001;
 //         # 10 addr = 16'h0002;
 //         # 10 addr = 16'h0004;
-//         # 10 $finish;
+//         # 10 addr = 16'h1000;
+//         # 10 addr = 16'hfffb;
+//         # 200 btn_u = 1;
+//         # 10 btn_u = 0;
+//         # 50 btn_d = 1;
+//         # 10 btn_d = 0;
+//         # 10 btn_d = 1;
+//         # 10 btn_d = 0;
+//         # 20 btn_l = 1;
+//         # 10 btn_l = 0;
+//         # 50 btn_d = 1;
+//         # 10 btn_d = 0;
+//         # 20 btn_r = 1;
+//         # 10 btn_r = 0;
+//         # 50 btn_d = 1;
+//         # 10 btn_d = 0;
+//         # 50 $finish;
 //     end
 //
 // endmodule // exmemory_tb
