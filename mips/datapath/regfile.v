@@ -13,7 +13,8 @@ module regfile #(parameter WIDTH = 32, ADDR_WIDTH = 5) (
     assign readData2 = MEM[readAddr2];
 
     initial begin
-        MEM[0] <= 32'b0;
+        for (i=0;i<(1<<ADDR_WIDTH);i=i+1)
+            MEM[i] = 0;
     end
 
     always @ (posedge clk) begin

@@ -13,7 +13,7 @@ module ram #(parameter WIDTH = 32, ADDR_WIDTH = 10) (
 
     always @ (posedge clk) begin
         if (reset) begin
-            for (i=0; i<(1<<ADDR_WIDTH); i++)
+            for (i=0; i<(1<<ADDR_WIDTH); i=i+1)
                 RAM[i] <= 0;
         end
         else if (write)
