@@ -8,7 +8,8 @@ module exmemory #(parameter WIDTH = 32, ADDR_WIDTH = 16) (
     // ========= I/O Devices =========
     input [15           : 0] switches,
     output reg [15      : 0] leds,
-
+    output reg [3       : 0] disp_sel,
+    output reg [7       : 0] disp_dig,
 
     output reg [WIDTH-1 : 0] memReadData
     );
@@ -79,11 +80,17 @@ module exmemory #(parameter WIDTH = 32, ADDR_WIDTH = 16) (
     end
 
     always @ (posedge clk) begin
-        if (~reset && MemWrite && ~RamWrite) begin
+        if (reset) begin
+            leds <= 0;
+            disp_sel <= 0;
+            disp_dig <= 0;
+        end else if (MemWrite && ~RamWrite) begin
             $display("[exmemory] time: %h, Write memWriteData: %h to I/O device addr: %h", $time, memWriteData[7:0], memAddr);
             case (memAddr)
-                16'hfffc: leds <= {8'bz, memWriteData[7:0]};
-                16'hfffd: leds <= {memWriteData[7:0], 8'bz};
+                16'hfffc: leds     <= {8'bz, memWriteData[7:0]};
+                16'hfffd: leds     <= {memWriteData[7:0], 8'bz};
+                16'hfffa: disp_sel <= memWriteData[3:0];
+                16'hfff9: disp_dig <= memWriteData[7:0];
             endcase
         end
     end

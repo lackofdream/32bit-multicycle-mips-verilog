@@ -104,7 +104,7 @@ module datapath (
     mux4 #(16) next_instr_src(aluResult[15:0], aluOut[15:0], jumpAddrFromInstrx4[15:0], 16'b0, PCSource, nextInsAddr);
 
     always @ ( * ) begin
-        $display("[datapath] time: %h, RealPCWrite: %b, nextInsAddr: %h, currentInsAddr: %h, aluResult %h, aluOut: %h, instruction: %h, memAddr: %h, memData: %h, memDataInReg: %h, writeRegAddr: %h, writeRegData: %h, dataFromReg1: %h, dataFromReg2: %h, aluParamData1: %h, aluParamData2: %h, ALUSrcA: %b, ALUSrcB: %b", $time, RealPCWrite, nextInsAddr, currentInsAddr, aluResult, aluOut, instruction, memAddr, memData, memDataInReg, writeRegAddr, writeRegData, dataFromReg1, dataFromReg2, aluParamData1, aluParamData2, ALUSrcA, ALUSrcB);
+        $display("[datapath] time: %h, RealPCWrite: %b, PCSource: %h, nextInsAddr: %h, currentInsAddr: %h, aluResult %h, aluOut: %h, instruction: %h, memAddr: %h, memData: %h, memDataInReg: %h, writeRegAddr: %h, writeRegData: %h, dataFromReg1: %h, dataFromReg2: %h, aluParamData1: %h, aluParamData2: %h, ALUSrcA: %b, ALUSrcB: %b", $time, RealPCWrite, PCSource, nextInsAddr, currentInsAddr, aluResult, aluOut, instruction, memAddr, memData, memDataInReg, writeRegAddr, writeRegData, dataFromReg1, dataFromReg2, aluParamData1, aluParamData2, ALUSrcA, ALUSrcB);
     end
 
 endmodule // datapath

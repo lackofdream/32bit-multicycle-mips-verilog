@@ -1,7 +1,9 @@
 module top (
     input clk, reset,
-    input [15:0] switches,
-    output [15:0] leds
+    input [15  : 0] switches,
+    output [15 : 0] leds,
+    output [3  : 0] disp_sel,
+    output [7  : 0] disp_dig
     );
 
     wire [31:0] memData, writeMemData;
@@ -11,7 +13,7 @@ module top (
 
     mips _mips(clk, reset, memData, MemWrite, MemMode, writeMemData, memAddr);
 
-    exmemory _ex_mem(clk, reset, MemWrite, MemMode, memAddr, writeMemData, switches, leds, memData);
+    exmemory _ex_mem(clk, reset, MemWrite, MemMode, memAddr, writeMemData, switches, leds, disp_sel, disp_dig, memData);
 
 
 endmodule // top
@@ -21,7 +23,9 @@ module top_tb ();
     reg clk, reset;
     reg [15:0] switches;
     wire [15:0] leds;
-    top _top(clk, reset, switches, leds);
+    wire [3:0] disp_sel;
+    wire [7:0] disp_dig;
+    top _top(clk, reset, switches, leds, disp_sel, disp_dig);
 
     always #5
         clk = ~clk;
@@ -36,7 +40,7 @@ module top_tb ();
     end
 
     always @ ( * ) begin
-        $display("[top] time: %h, leds: %h", $time, leds);
+        $display("[top] time: %h, leds: %h, disp_sel: %h, disp_dig: %h", $time, leds, disp_sel, disp_dig);
     end
 
 
