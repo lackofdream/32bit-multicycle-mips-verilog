@@ -1,4 +1,5 @@
 .text
+ori $t7, $zero, 0
 main:
 lbu $t0, 0xfffb($zero) # $t0: 当前状态
 ori $t1, $zero, 0
@@ -7,6 +8,9 @@ ori $t1, $zero, 1
 beq $t0, $t1, wait_write_addr
 ori $t1, $zero, 2
 beq $t0, $t1, wait_read_addr
+ori $t1, $zero, 3
+beq $t0, $t1, wait_write_data
+j wait_op
 
 wait_write_data:
 ori $t7, $zero, 3  # $t7 存储上一个非0状态
@@ -39,6 +43,9 @@ ori $t1, $zero, 1
 beq $t7, $t1, get_write_addr  # 上一个非0状态为1
 ori $t1, $zero, 2
 beq $t7, $t1, get_read_addr  # 上一个非0状态为2
+ori $t1, $zero, 3
+beq $t7, $t1, get_write_data
+j to_main
 
 get_write_data:   # 上一个非0状态为3
 lbu $t6, 0xfffe($zero) # 拨码开关低8位
@@ -50,9 +57,9 @@ ori $t7, $zero, 0
 j main
 
 to_main:
-ori $t1, $zero, 0x00  
+ori $t1, $zero, 0xaa   # 指示用，交替亮为等待操作，空闲状态
 sb $t1, 0xfffd($zero) 
-ori $t1, $zero, 0x00 
+ori $t1, $zero, 0xaa 
 sb $t1, 0xfffc($zero)
 j main
 
@@ -71,7 +78,7 @@ lbu $t3, 0xffff($zero) # 拨码开关高8位
 sll $t3, $t3, 8
 or $t4, $t4, $t3 # $t4: 获取的读取地址
 
-lw $t3, 0($t0) # t3: 内存内容
+lw $t3, 0($t4) # t3: 内存内容
 sb $t3, 0xfffc($zero)
 srl $t3, $t3, 8
 sb $t3, 0xfffd($zero)

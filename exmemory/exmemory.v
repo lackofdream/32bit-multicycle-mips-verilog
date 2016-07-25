@@ -26,7 +26,13 @@ module exmemory #(parameter WIDTH = 32, ADDR_WIDTH = 16) (
     assign RamWrite = ~reset & MemWrite & (memAddr[15:12]==4'h1);
 
     rom ROM(memAddr[11:2], romData);
-    ram RAM(clk, reset, RamWrite, memAddr[11:2], memWriteData, ramData);
+    ram RAM(clk, RamWrite, memAddr[11:2], memWriteData, ramData);
+
+    initial begin
+        leds = 0;
+        disp_sel = 4'hf;
+        disp_dig = 8'hff;
+    end
 
     always @ ( * ) begin
         // $display("[exmemory] time: %h, mode: %b, read %h", $time, MemMode, memAddr);

@@ -6,15 +6,13 @@ module regfile #(parameter WIDTH = 32, ADDR_WIDTH = 5) (
     output [WIDTH-1     : 0] readData1, readData2
     );
 
-    integer i;
     reg [WIDTH-1 : 0] MEM[0:(1<<ADDR_WIDTH)-1];
 
     assign readData1 = MEM[readAddr1];
     assign readData2 = MEM[readAddr2];
 
     initial begin
-        for (i=0;i<(1<<ADDR_WIDTH);i=i+1)
-            MEM[i] = 0;
+        MEM[0] = 0;
     end
 
     always @ (posedge clk) begin

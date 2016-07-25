@@ -1,5 +1,5 @@
 module ram #(parameter WIDTH = 32, ADDR_WIDTH = 10) (
-    input clk, reset,
+    input clk,
     input write,
     input [ADDR_WIDTH-1 : 0] addr,
     input [WIDTH-1      : 0] inData,
@@ -7,16 +7,11 @@ module ram #(parameter WIDTH = 32, ADDR_WIDTH = 10) (
     );
 
     reg [WIDTH-1 : 0] RAM[0:(1<<ADDR_WIDTH)-1];
-    integer i;
 
     assign outData = RAM[addr];
 
     always @ (posedge clk) begin
-        if (reset) begin
-            for (i=0; i<(1<<ADDR_WIDTH); i=i+1)
-                RAM[i] <= 0;
-        end
-        else if (write)
+        if (write)
             RAM[addr] <= inData;
     end
 
